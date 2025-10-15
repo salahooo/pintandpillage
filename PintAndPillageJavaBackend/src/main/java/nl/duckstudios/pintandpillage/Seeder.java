@@ -27,11 +27,8 @@ import java.util.Optional;
 public class Seeder {
     private final UserDAO userDAO;
     private final VillageFactory villageFactory;
-
     private final VillageDataMapper villageDataMapper;
-
     private final VillageDAO villageDAO;
-
     private final AuthenticationService authenticationService;
 
     public Seeder(UserDAO userDAO, VillageFactory villageFactory, VillageDataMapper villageDataMapper, VillageDAO villageDAO, AuthenticationService authenticationService) {
@@ -49,24 +46,29 @@ public class Seeder {
     }
 
     public void seedUser() {
-        User user = new User();
-        user.setEmail("test5@mail.com");
-        user.setUsername("Derp");
-        user.setPassword(new BCryptPasswordEncoder().encode("Test123!"));
-        userDAO.save(user);
+        // Alleen seeden als de user nog niet bestaat
+        if (userDAO.findByEmail("test5@mail.com").isEmpty()) {
+            User user = new User();
+            user.setEmail("test5@mail.com");
+            user.setUsername("Derp");
+            user.setPassword(new BCryptPasswordEncoder().encode("Test123!"));
+            userDAO.save(user);
+        }
 
-        User user2 = new User();
-        user2.setEmail("test6@mail.com");
-        user2.setUsername("DerpTheBetterDerp");
-        user2.setPassword(new BCryptPasswordEncoder().encode("Test123!"));
-        userDAO.save(user2);
+        if (userDAO.findByEmail("test6@mail.com").isEmpty()) {
+            User user2 = new User();
+            user2.setEmail("test6@mail.com");
+            user2.setUsername("DerpTheBetterDerp");
+            user2.setPassword(new BCryptPasswordEncoder().encode("Test123!"));
+            userDAO.save(user2);
+        }
     }
 
     public void seedVillage() {
         Optional<User> user = this.userDAO.findByEmail("test5@mail.com");
         Optional<User> user2 = this.userDAO.findByEmail("test6@mail.com");
 
-        if (user2.isPresent()) {
+        if (user2.isPresent() && this.villageDAO.getVillagesByUserId(user2.get().getId()).isEmpty()) {
             Village village2 = this.villageFactory.createBasicVillage(user2.get(), new Coord(20, 15));
             Barracks barracks = new Barracks();
             barracks.setLevel(10);
@@ -91,20 +93,17 @@ public class Seeder {
             house.setVillage(village2);
             house.setPosition(new Coord(1, 4));
             house.setUnderConstruction(false);
-            village2.setVillageResources(new HashMap<>() {
-                {
-                    put(ResourceType.Stone.name(), 10000);
-                    put(ResourceType.Wood.name(), 10000);
-                    put(ResourceType.Beer.name(), 10000);
-                    put(ResourceType.Hop.name(), 5);
-                }
-            });
+            village2.setVillageResources(new HashMap<>() {{
+                put(ResourceType.Stone.name(), 10000);
+                put(ResourceType.Wood.name(), 10000);
+                put(ResourceType.Beer.name(), 10000);
+                put(ResourceType.Hop.name(), 5);
+            }});
 
             village2.createBuilding(barracks);
             village2.createBuilding(smith);
             village2.createBuilding(harbor);
             village2.createBuilding(house);
-
 
             Spear spearUnit = new Spear();
             TransportShip transportShip = new TransportShip();
@@ -115,7 +114,7 @@ public class Seeder {
             this.villageDAO.save(village2);
         }
 
-        if (user.isPresent()) {
+        if (user.isPresent() && this.villageDAO.getVillagesByUserId(user.get().getId()).isEmpty()) {
             Village village = this.villageFactory.createBasicVillage(user.get(), new Coord(10, 10));
             Barracks barracks = new Barracks();
             barracks.setLevel(10);
@@ -140,21 +139,17 @@ public class Seeder {
             house.setVillage(village);
             house.setPosition(new Coord(1, 4));
             house.setUnderConstruction(false);
-            village.setVillageResources(new HashMap<>() {
-                {
-                    put(ResourceType.Stone.name(), 10000);
-                    put(ResourceType.Wood.name(), 10000);
-                    put(ResourceType.Beer.name(), 10000);
-                    put(ResourceType.Hop.name(), 5);
-                }
-            });
-
+            village.setVillageResources(new HashMap<>() {{
+                put(ResourceType.Stone.name(), 10000);
+                put(ResourceType.Wood.name(), 10000);
+                put(ResourceType.Beer.name(), 10000);
+                put(ResourceType.Hop.name(), 5);
+            }});
 
             village.createBuilding(barracks);
             village.createBuilding(smith);
             village.createBuilding(harbor);
             village.createBuilding(house);
-
 
             Spear spearUnit = new Spear();
             TransportShip transportShip = new TransportShip();
@@ -165,5 +160,4 @@ public class Seeder {
             this.villageDAO.save(village);
         }
     }
-
 }

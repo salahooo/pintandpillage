@@ -71,10 +71,12 @@
             register: function() {
                 if (this.validateForm()) {
                     let data = {
-                        Email: this.email,
-                        Username: this.username,
-                        Password: this.password,
+                        email: this.email,
+                        username: this.username,
+                        password: this.password,
+
                     };
+                    console.log(data)
                     this.$store.dispatch('register', data)
                         .then(() => {
                             this.registered = true;

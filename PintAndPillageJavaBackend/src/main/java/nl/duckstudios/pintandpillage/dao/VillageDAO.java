@@ -9,7 +9,7 @@ import java.util.List;
 @Component
 public class VillageDAO {
 
-    private VillageRepository villageRepository;
+    private final VillageRepository villageRepository;
 
     public VillageDAO(VillageRepository villageRepository) {
         this.villageRepository = villageRepository;
@@ -20,7 +20,8 @@ public class VillageDAO {
     }
 
     public Village getVillage(long id) {
-        return this.villageRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return this.villageRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
     }
 
     public List<Village> getVillages(long id) {
@@ -31,4 +32,8 @@ public class VillageDAO {
         return this.villageRepository.findAll();
     }
 
+    // ✅ Nieuwe methode zodat Seeder kan checken of een user villages heeft
+    public List<Village> getVillagesByUserId(Long userId) {
+        return this.villageRepository.findByUserId(userId);
+    }
 }

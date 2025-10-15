@@ -1,0 +1,6 @@
+{
+  "name": "Mine",
+  "level": 1,
+  "generatesResource": "Stone",
+  "resourcesPerHour": 80
+}
