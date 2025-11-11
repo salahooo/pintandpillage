@@ -18,7 +18,14 @@
         props: ['buildingId'],
         computed: {
             building: function(){
-                return this.$store.getters.building(this.buildingId);
+                const fallback = {
+                    name: '',
+                    level: 0,
+                    generatesResource: null,
+                    resourcesPerHour: 0
+                };
+                // REFACTOR (ITSTEN H2): Guard modal rendering when building has just been removed server-side.
+                return this.$store.getters.building(this.buildingId) || fallback;
             }
         },
         methods:{

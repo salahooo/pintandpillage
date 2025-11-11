@@ -3,12 +3,14 @@ package nl.duckstudios.pintandpillage.entity.buildings;
 import lombok.Getter;
 import lombok.Setter;
 import nl.duckstudios.pintandpillage.model.ResourceType;
+import nl.duckstudios.pintandpillage.helper.PopulationCalculator;
 
 import javax.persistence.Entity;
 import java.util.HashMap;
 
 @Entity
 public class House extends Building implements IPopulatable {
+    private static final PopulationCalculator POPULATION_CALCULATOR = new PopulationCalculator();
     @Getter
     @Setter
     public String name = "House";
@@ -31,7 +33,7 @@ public class House extends Building implements IPopulatable {
     }
 
     public void updateBuilding() {
-        this.populationCapacity = super.getLevel() == 0 ? 0 : (int) (8 * (super.getLevel() * super.getLevel()) + 10 * Math.pow(1.32, super.getLevel()));
+        this.populationCapacity = POPULATION_CALCULATOR.houseCapacity(super.getLevel()); // REFACTOR (ITSTEN H2): Extract pure population formula for stable tests.
         super.setResourcesRequiredLevelUp(new HashMap<>() {
             {
                 int level = House.super.getLevel();

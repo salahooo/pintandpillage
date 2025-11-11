@@ -1,5 +1,7 @@
 {
   "pluginsFile": "tests/e2e/plugins/index.js",
-  "integrationFolder": "cypress/e2e"
+  "integrationFolder": "cypress/e2e",
+    "video": true
+
 
 }

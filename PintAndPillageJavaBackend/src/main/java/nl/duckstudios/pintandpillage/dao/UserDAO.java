@@ -18,6 +18,10 @@ public class UserDAO {
         return userRepository.findByEmail(email);
     }
 
+    public Optional<User> findByUsername(String username) { // REFACTOR (ITSTEN H2): Expose username lookup for combined email/username login.
+        return userRepository.findByUsername(username);
+    }
+
     public User save(User user) {
         return this.userRepository.save(user);
     }

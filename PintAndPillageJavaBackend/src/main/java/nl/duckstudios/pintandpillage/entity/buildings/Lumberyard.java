@@ -3,6 +3,7 @@ package nl.duckstudios.pintandpillage.entity.buildings;
 import lombok.Getter;
 import lombok.Setter;
 import nl.duckstudios.pintandpillage.entity.Village;
+import nl.duckstudios.pintandpillage.helper.ResourceProductionCalculator;
 import nl.duckstudios.pintandpillage.model.ResourceType;
 
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 @Entity
 public class Lumberyard extends ResourceBuilding {
 
+    private static final ResourceProductionCalculator PRODUCTION_CALCULATOR = new ResourceProductionCalculator();
 
     @Getter
     @Setter
@@ -30,7 +32,8 @@ public class Lumberyard extends ResourceBuilding {
 //        return (int)(20 + 12 * Math.pow(super.getLevel(), 1.2));
 //    }
     private int updateResourcesPerHour() {
-        return 1000000;
+        return PRODUCTION_CALCULATOR
+                .productionPerHour(ResourceType.Wood, super.getLevel()); // REFACTOR (ITSTEN H2): Extract pure production function for deterministic tests.
     }
 
     @Override

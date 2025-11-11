@@ -187,6 +187,10 @@ public class Village {
         this.updateVillageState();
     }
 
+    public BuildPosition[] getValidBuildPositions() {
+        return this.validBuildPositions; // REFACTOR (ITSTEN H2): Expose build slots for placement validation.
+    }
+
     public boolean demolishBuilding(long buildingId) {
         Building building = this.buildings.stream()
                 .filter(b -> b.getBuildingId() == buildingId)

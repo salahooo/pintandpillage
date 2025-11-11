@@ -1,6 +1,7 @@
 <template>
     <div>
-        <div class="buildingListItemContainer" :class="{ disabledOverlay: !canBeBuild()}">
+        <!-- REFACTOR (ITSTEN H2): Add data-testid for stable E2E selection. -->
+        <div class="buildingListItemContainer" :class="{ disabledOverlay: !canBeBuild()}" :data-testid="'build-option-' + building.name.toLowerCase()">
 
             <img class="buildingIcon" v-bind:src="require('../../assets/buildingIcons/' + building.name + '.png')"/>
 

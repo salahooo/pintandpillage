@@ -4,15 +4,13 @@ import nl.duckstudios.pintandpillage.Exceptions.ForbiddenException;
 import nl.duckstudios.pintandpillage.Exceptions.UnmetEmailRequirementsException;
 import nl.duckstudios.pintandpillage.Exceptions.UnmetPasswordRequirementsException;
 import nl.duckstudios.pintandpillage.Exceptions.UserAlreadyExistsException;
+import nl.duckstudios.pintandpillage.Exceptions.UserNotFoundException;
 import nl.duckstudios.pintandpillage.config.JwtTokenUtil;
 import nl.duckstudios.pintandpillage.dao.UserDAO;
 import nl.duckstudios.pintandpillage.entity.User;
 import nl.duckstudios.pintandpillage.model.JwtResult;
 import nl.duckstudios.pintandpillage.model.LoginCredentials;
 import org.passay.*;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,13 +30,11 @@ public class AuthController {
 
     private final UserDAO userDAO;
     private final JwtTokenUtil jwtUtil;
-    private final AuthenticationManager authManager;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthController(JwtTokenUtil jwtUtil, AuthenticationManager authManager, PasswordEncoder passwordEncoder, UserDAO userDAO) {
+    public AuthController(JwtTokenUtil jwtUtil, PasswordEncoder passwordEncoder, UserDAO userDAO) {
         this.jwtUtil = jwtUtil;
-        this.authManager = authManager;
-        this.passwordEncoder = passwordEncoder;
+        this.passwordEncoder = passwordEncoder; // REFACTOR (ITSTEN H2): Constructor updated after removing AuthenticationManager dependency.
         this.userDAO = userDAO;
     }
 
@@ -67,29 +63,31 @@ public class AuthController {
 
     @PostMapping("/login")
     public JwtResult login(@RequestBody LoginCredentials body) {
-        try {
-            UsernamePasswordAuthenticationToken authInputToken =
-                    new UsernamePasswordAuthenticationToken(body.username, body.password);
+        String identifier = body.username;
+        Optional<User> userOptional = userDAO.findByEmail(identifier);
+        if (userOptional.isEmpty()) {
+            userOptional = userDAO.findByUsername(identifier); // REFACTOR (ITSTEN H2): Fallback lookup enables username-based login.
+        }
 
-            authManager.authenticate(authInputToken);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found for identifier " + identifier); // REFACTOR (ITSTEN H2): Distinguish unknown identifiers for clearer HTTP responses.
+        }
 
-            String token = jwtUtil.generateToken(body.username);
-            JwtResult jwtResult = new JwtResult();
-
-            Optional<User> user = userDAO.findByEmail(body.username);
-            if (user.isPresent() && user.get().isFirstTimeLoggedIn()) {
-                user.get().setFirstTimeLoggedIn(false);
-                userDAO.save(user.get());
-                jwtResult.isFirstTimeLoggedIn = true;
-            }
-            jwtResult.token = token;
-
-
-            return jwtResult;
-
-        } catch (AuthenticationException authExc) {
+        User user = userOptional.get();
+        if (!passwordEncoder.matches(body.password, user.getPassword())) { // REFACTOR (ITSTEN H2): Manual password validation replaces AuthenticationManager.
             throw new ForbiddenException("Invalid Login Credentials");
         }
+
+        String token = jwtUtil.generateToken(user.getEmail()); // REFACTOR (ITSTEN H2): Always emit tokens based on canonical email identity.
+        JwtResult jwtResult = new JwtResult();
+
+        if (user.isFirstTimeLoggedIn()) {
+            user.setFirstTimeLoggedIn(false);
+            userDAO.save(user);
+            jwtResult.isFirstTimeLoggedIn = true;
+        }
+        jwtResult.token = token;
+        return jwtResult;
     }
 
     private boolean isValidPassword(String password) {

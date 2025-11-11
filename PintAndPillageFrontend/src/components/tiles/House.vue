@@ -1,5 +1,6 @@
 <template>
-    <div class="clickableTile">
+    <div class="clickableTile" data-testid="building-house">
+        <!-- REFACTOR (ITSTEN H2): Identifier to assert built houses in E2E tests. -->
         <construction-tile v-if="buildingProperties.isUnderConstruction"></construction-tile>
         <img v-else class="tileImgHouse" :src="getTileSource()"/>
     </div>
@@ -56,3 +57,4 @@
         z-index: 0;
     }
 </style>
+

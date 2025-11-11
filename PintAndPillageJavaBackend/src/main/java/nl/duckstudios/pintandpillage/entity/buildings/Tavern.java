@@ -2,6 +2,7 @@ package nl.duckstudios.pintandpillage.entity.buildings;
 
 import lombok.Getter;
 import lombok.Setter;
+import nl.duckstudios.pintandpillage.helper.ResourceProductionCalculator;
 import nl.duckstudios.pintandpillage.model.ResourceType;
 
 import javax.persistence.Entity;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 @Entity
 public class Tavern extends ResourceBuilding {
 
+    private static final ResourceProductionCalculator PRODUCTION_CALCULATOR = new ResourceProductionCalculator();
 
     @Getter
     @Setter
@@ -26,7 +28,8 @@ public class Tavern extends ResourceBuilding {
 //        return (int)(10 + 6 * Math.pow(super.getLevel(), 1.15));
 //    }
     private int updateResourcesPerHour() {
-        return 300;
+        return PRODUCTION_CALCULATOR
+                .productionPerHour(ResourceType.Beer, super.getLevel()); // REFACTOR (ITSTEN H2): Extract pure production function for deterministic tests.
     }
 
     @Override

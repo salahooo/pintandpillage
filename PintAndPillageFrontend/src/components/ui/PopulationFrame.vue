@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="populationFrame">
+        <div class="populationFrame" id="population">
             <img class="populationImg" src="../../assets/ui-items/populationIcon.png"/>
             <p :style="{'color': hasEnoughPopulation() ? 'white' : 'red'}">{{populationLeft}}</p>
         </div>

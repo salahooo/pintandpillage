@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div data-testid="building-barracks">
         <construction-tile v-if="buildingProperties.isUnderConstruction"></construction-tile>
         <img v-else class="tileImg" :src="getTileSource()"/>
     </div>

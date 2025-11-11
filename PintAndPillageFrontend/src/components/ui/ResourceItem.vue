@@ -1,7 +1,11 @@
 <template>
     <div class="resourceItemContainer">
         <div class="resourceItem" v-for="(value, key) in resources" :key="value.key">
-            <div aria-disabled="true" class="resourceDetails" v-tooltip.bottom-center="getResourchesPerHour(key)">
+            <div
+                    :id="key.toLowerCase()"
+                    aria-disabled="true"
+                    class="resourceDetails"
+                    v-tooltip.bottom-center="getResourchesPerHour(key)">
                 <img class="resourceImg" v-bind:src="require('../../assets/ui-items/' + key + '.png')"/>
                 <p v-if="checkAvailability" :style="{'color': hasEnoughResources(key,value) ? 'white' : 'red'}" >{{value}}</p>
                 <p v-else :style="{'color': hasEnoughStorage(key,value) ? 'yellow' : 'white'}">{{value}}</p>

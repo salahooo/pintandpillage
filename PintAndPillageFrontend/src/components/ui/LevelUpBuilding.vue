@@ -35,17 +35,29 @@
         },
         computed: {
             currentBuilding: function(){
-                return this.$store.getters.building(this.buildingId);
+                const fallback = {
+                    buildingId: this.buildingId,
+                    name: '',
+                    level: 0,
+                    generatesResource: null,
+                    resourcesRequiredLevelUp: {},
+                    populationRequiredNextLevel: 0,
+                    isUnderConstruction: false,
+                    constructionTime: null,
+                    constructionTimeLeft: null
+                };
+                // REFACTOR (ITSTEN H2): Provide fallback structure so UI keeps rendering after demolition removes store entry.
+                return this.$store.getters.building(this.buildingId) || fallback;
             },
         },
         methods:{
             canBeLeveledUp: function() {
-                if(this.currentBuilding.isUnderConstruction){
+                if(!this.currentBuilding || this.currentBuilding.isUnderConstruction){
                     return false;
                 }
 
                 let villageresources = this.$store.state.village.data.villageResources;
-                for (const [resource, amount] of Object.entries(this.currentBuilding.resourcesRequiredLevelUp)) {
+                for (const [resource, amount] of Object.entries(this.currentBuilding.resourcesRequiredLevelUp || {})) {
                     if (villageresources[resource] == null || villageresources[resource] < amount ){
                         return false;
                     }

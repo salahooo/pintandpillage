@@ -1,5 +1,6 @@
 <template>
-    <div class="constructionModal scrollerFirefox">
+    <div class="constructionModal scrollerFirefox" data-testid="build-menu">
+        <!-- REFACTOR (ITSTEN H2): Expose stable build menu selector for Cypress. -->
         <h1>Building List</h1>
         <hr style="width: 80%; margin-bottom: 10px">
         <div class="buildingList">

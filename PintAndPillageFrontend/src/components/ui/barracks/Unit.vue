@@ -3,7 +3,7 @@
        <div class="unitContainer">
            <div class="unitImage">
                <img :src="require('../../../assets/ui-items/' + unit.unit.unitName + '.png')" width="77px" height="70px"/>
-               <div class="unitsInStore">
+               <div class="unitsInStore" :id="unit.unit.unitName === 'Spear' ? 'army-count' : null">
                    <p>{{getUnitAmount(unit.unit.unitName)}}</p>
                </div>
            </div>
@@ -16,7 +16,11 @@
                    <div class="unitInputContainer">
                        <input :disabled="!canRecruit()" type="number" min="1" class="unitInput" :value="sliderValue" v-on:input="updateSliderValue($event)" @keypress="validateNumberInput(unitMaxProduce, $event)">
                    </div>
-                   <button :disabled="!canRecruit()" @click="createUnit" @keyup.enter="close()">Train</button>
+                   <button
+                           :disabled="!canRecruit()"
+                           :data-testid="unit.unit.unitName === 'Spear' ? 'train-spear' : null"
+                           @click="createUnit"
+                           @keyup.enter="close()">Train</button>
                </div>
                <div class="unitResources">
                    <resource-item :checkAvailability='checkAvailability' class="resourceItemComp" :resources="unit.unit.resourcesRequiredToProduce" :displayTooltip="false"></resource-item>
