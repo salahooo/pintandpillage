@@ -37,6 +37,13 @@ public class VillageDataMapper {
         return villageDAO.save(village);
     }
 
+    public Village demolishBuilding(Village village, long buildingId) {
+        if (!village.demolishBuilding(buildingId)) {
+            return village;
+        }
+        return villageDAO.save(village); // REFACTOR (ITSTEN H2): Persist demolition without reintroducing resource refunds.
+    }
+
     public void update(Village village) {
         this.villageDAO.save(village);
     }

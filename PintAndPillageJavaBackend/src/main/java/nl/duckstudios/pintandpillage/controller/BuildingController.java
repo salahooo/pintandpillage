@@ -10,6 +10,8 @@ import nl.duckstudios.pintandpillage.service.AuthenticationService;
 import nl.duckstudios.pintandpillage.service.BuildingService;
 import nl.duckstudios.pintandpillage.service.VillageService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("api/building")
@@ -57,5 +59,23 @@ public class BuildingController {
         building.levelUp();
         this.villageService.update(village);
         return village;
+    }
+
+    @RequestMapping(value = "/remove/{id}", method = RequestMethod.POST)
+    @ResponseBody
+    public Village removeBuilding(@PathVariable long id) {
+        User user = this.authenticationService.getAuthenticatedUser();
+        Building building = this.buildingService.getBuilding(id);
+        if (building == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown building id"); // REFACTOR (ITSTEN H2): Provide clear validation when building does not exist.
+        }
+        Village village = building.getVillage();
+        if (village == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Building is not placed in a village"); // REFACTOR (ITSTEN H2): Guard against orphaned buildings in demolition.
+        }
+
+        this.accountService.checkIsCorrectUser(user.getId(), village);
+
+        return this.villageService.demolishBuilding(village, id); // REFACTOR (ITSTEN H2): Expose demolition through controller without resource refund.
     }
 }

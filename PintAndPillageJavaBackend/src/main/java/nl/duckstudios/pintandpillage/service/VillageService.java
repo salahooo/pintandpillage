@@ -50,6 +50,10 @@ public class VillageService {
         return this.villageDataMapper.createBuilding(village, building);
     }
 
+    public Village demolishBuilding(Village village, long buildingId) {
+        return this.villageDataMapper.demolishBuilding(village, buildingId); // REFACTOR (ITSTEN H2): Route demolition through mapper to ensure consistent state updates.
+    }
+
     public void update(Village village) {
         this.villageDataMapper.update(village);
     }

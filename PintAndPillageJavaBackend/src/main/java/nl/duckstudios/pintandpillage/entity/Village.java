@@ -187,6 +187,28 @@ public class Village {
         this.updateVillageState();
     }
 
+    public boolean demolishBuilding(long buildingId) {
+        Building building = this.buildings.stream()
+                .filter(b -> b.getBuildingId() == buildingId)
+                .findFirst()
+                .orElse(null);
+        if (building == null) {
+            return false;
+        }
+        this.buildings.remove(building);
+        building.setVillage(null); // REFACTOR (ITSTEN H2): Ensure demolished building no longer references the village.
+        this.updateVillageState(); // REFACTOR (ITSTEN H2): Recalculate village state after demolition without refunds.
+        return true;
+    }
+
+    public boolean hasBuilding(long buildingId) {
+        return this.buildings.stream().anyMatch(b -> b.getBuildingId() == buildingId); // REFACTOR (ITSTEN H2): Provide lookup helper for demolition invariants.
+    }
+
+    public int getBuildingCount() {
+        return this.buildings.size(); // REFACTOR (ITSTEN H2): Expose building count for slot validation.
+    }
+
     public void updateVillageState() {
         for (Building building : this.buildings) {
             building.updateBuildingState();
