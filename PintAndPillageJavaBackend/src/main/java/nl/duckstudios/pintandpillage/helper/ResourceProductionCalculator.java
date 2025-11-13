@@ -17,7 +17,7 @@ public class ResourceProductionCalculator {
         double value = switch (type) {
             case Beer -> 10 + 6 * Math.pow(level, 1.15);
             case Wood, Stone, Hop -> 20 + 12 * Math.pow(level, 1.2);
-            default -> 0;
+            default ->0;
         };
 
         return (int) value;

@@ -11,8 +11,12 @@ public final class PlacementRules {
     }
 
     public static boolean isPlacementAllowed(BuildPosition[] positions, String buildingName, Coord position) {
+        boolean hasDedicatedPlacement = Arrays.stream(positions)
+                .anyMatch(bp -> buildingName.equals(bp.allowedBuilding));
+
         return Arrays.stream(positions)
                 .filter(bp -> bp.position.getX() == position.getX() && bp.position.getY() == position.getY())
-                .anyMatch(bp -> bp.allowedBuilding == null || bp.allowedBuilding.equals(buildingName)); // REFACTOR (ITSTEN H2): Extracted pure placement rule for testability.
+                .anyMatch(bp -> buildingName.equals(bp.allowedBuilding)
+                        || (bp.allowedBuilding == null && !hasDedicatedPlacement)); // REFACTOR (ITSTEN H2): Extracted pure placement rule for testability.
     }
 }

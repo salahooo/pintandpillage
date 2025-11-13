@@ -6,17 +6,17 @@ import nl.duckstudios.pintandpillage.model.ResourceType;
 import java.util.HashMap;
 
 public class CharcoalKiln extends Building {
+    @Getter @Setter
+    private String name = "CharcoalKiln";
 
-    @Getter
-    @Setter
-    private String name = "Charcoal Kiln";
+
 
     public CharcoalKiln() {
         super();
-        this.updateBuilding();
         super.setDescription("Converts wood into charcoal with 60% efficiency");
-        super.setProducesResources(true);
+        super.setProducesResources(false);
     }
+
 
     public CharcoalKiln(int level) {
         super();
@@ -24,10 +24,9 @@ public class CharcoalKiln extends Building {
         this.updateBuilding();
     }
 
-    
-    // --------------------------
-    //   BUILDING LOGIC
-    // --------------------------
+
+
+
     @Override
     public void updateBuilding() {
         int lvl = super.getLevel();
@@ -36,7 +35,7 @@ public class CharcoalKiln extends Building {
     }
 
     public void setResourcesAtGivenLevel(int level) {
-        long timeSeconds = level * 30L + 40;
+        long timeSeconds = level * 30 + 40;
         super.setConstructionTimeSeconds(timeSeconds);
     }
 
@@ -47,35 +46,21 @@ public class CharcoalKiln extends Building {
         }});
     }
 
-     // --------------------------
-    //   CONVERSION LOGIC
-    // --------------------------
-    /**
-     * Zet een hoeveelheid hout om in houtskool met 60% efficiëntie.
-     * De input is een map van resources, de output is een map met geüpdatete resources.
-     */
+
     public HashMap<String, Integer> turnWoodIntoCoal(HashMap<String, Integer> resources) {
         HashMap<String, Integer> updated = new HashMap<>(resources);
-
         int woodAmount = resources.getOrDefault(ResourceType.Wood.name(), 0);
-        int producedCharcoal = this.convertWoodToCharcoal(woodAmount);
+        int producedCharcoal = (int) Math.floor(woodAmount * 0.6);
 
-        // verwijder gebruikt hout en voeg houtskool toe
-        updated.put(ResourceType.Wood.name(), woodAmount - woodAmount);
-        updated.put(ResourceType.Charcoal.name(), 
-                    resources.getOrDefault(ResourceType.Charcoal.name(), 0) + producedCharcoal);
+        updated.put(ResourceType.Wood.name(), 0);
+        updated.put(ResourceType.Charcoal.name(), resources.getOrDefault(ResourceType.Charcoal.name(), 0) + producedCharcoal);
 
         return updated;
     }
 
-    public int convertWoodToCharcoal(int woodAmount) {
-        if (woodAmount <= 0) {
-            return 0;
-        }
-        return (int) Math.floor(woodAmount * 0.6);
-    }
+    
 
 
-
+    
 
 }
