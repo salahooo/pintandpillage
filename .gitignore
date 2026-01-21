@@ -1,2 +1,8 @@
 PintAndPillageFrontend/docs/tests/frontend-unit-tests.md
 PintAndPillageFrontend/docs/tests/E2E_BuildMenu.md
+node_modules
+cypress
+README_PintAndPillage.md
+README_Research_Tests.md
+PintAndPillageFrontend/tests/unit/README_UnitCreationTest.md
+PintAndPillageJavaBackend/Readme for the 2 tests.md

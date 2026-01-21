@@ -1,0 +1,16 @@
+{
+  "id": 1,
+  "villageName": "Hostile Village",
+  "owner": "Enemy Jarl",
+  "x": 5,
+  "y": 10,
+  "resources": {
+    "wood": 1000,
+    "stone": 800,
+    "beer": 500
+  },
+  "troops": {
+    "vikings": 20,
+    "archers": 15
+  }
+}
